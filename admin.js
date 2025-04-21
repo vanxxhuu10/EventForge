@@ -1,23 +1,23 @@
 
-// window.onload = function () {
-//   // Correct key and password
-//   const correctKey = "event-management";
-//   const correctPassword = "VITChennai$123";
+window.onload = function () {
+  // Correct key and password
+  const correctKey = "event-management";
+  const correctPassword = "VITChennai$123";
 
-//   // Prompt the user to enter the key and password
-//   const enteredKey = prompt("Please enter the admin key:");
-//   const enteredPassword = prompt("Please enter the admin password:");
+  // Prompt the user to enter the key and password
+  const enteredKey = prompt("Please enter the admin key:");
+  const enteredPassword = prompt("Please enter the admin password:");
 
-//   // Check if the entered key and password match the correct ones
-//   if (enteredKey === correctKey && enteredPassword === correctPassword) {
-//     // If correct, stay on the admin page
-//     console.log("Access granted!");
-//   } else {
-//     // If incorrect, show an alert and redirect to index.html
-//     alert("Incorrect key or password. Access denied!");
-//     window.location.href = "index.html"; // Redirect back to the index page
-//   }
-// }
+  // Check if the entered key and password match the correct ones
+  if (enteredKey === correctKey && enteredPassword === correctPassword) {
+    // If correct, stay on the admin page
+    console.log("Access granted!");
+  } else {
+    // If incorrect, show an alert and redirect to index.html
+    alert("Incorrect key or password. Access denied!");
+    window.location.href = "index.html"; // Redirect back to the index page
+  }
+}
 
 
 
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fetch All Venues data
   function loadAllVenuesTable() {
-    fetch("/get-all-venues")
+    fetch("https://eventforge.onrender.com/get-all-venues")
       .then(response => response.json())
       .then(data => {
         venuesData = data;
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Submit data to the server
   function submitData() {
-    fetch("/update-all-venues", {
+    fetch("https://eventforge.onrender.com/update-all-venues", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fetch Venues Allotted data
   function loadVenuesAllottedTable() {
-    fetch("/get-venues-allotted")
+    fetch("https://eventforge.onrender.com/get-venues-allotted")
       .then(response => response.json())
       .then(data => {
         venuesAllottedData = data;
@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Submit data to the server
   function submitData() {
-    fetch("/update-venues-allotted", {
+    fetch("https://eventforge.onrender.com/update-venues-allotted", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Clear any previous error or existing content
     venueTableContainer.innerHTML = '';
   
-    fetch("/get-venues-pending")
+    fetch("https://eventforge.onrender.com/get-venues-pending")
       .then(response => response.json())
       .then(data => {
         console.log("Venues Pending Data:", data); // Log data to the console
@@ -440,7 +440,7 @@ headerRow.appendChild(actionTh); // Append action column header
 
   // Submit data to the server
   function submitData() {
-    fetch("/update-venues-pending", {
+    fetch("https://eventforge.onrender.com/update-venues-pending", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -468,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("eventsBtn").addEventListener("click", loadEventsTable);
 
   function loadEventsTable() {
-    fetch("/get-events")
+    fetch("https://eventforge.onrender.com/get-events")
       .then(response => response.json())
       .then(data => {
         currentData = data;
@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function submitData() {
-    fetch("/update-events", {
+    fetch("https://eventforge.onrender.com/update-events", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -634,7 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to load UDS data and render the table
   function loadUdsTable() {
-    fetch("/get-uds")
+    fetch("https://eventforge.onrender.com/get-uds")
       .then(response => response.json())
       .then(data => {
         udsData = data;
@@ -766,7 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Submit data for UDS table
     if (tableTitle === "UDS Table") {
-      fetch("/update-uds", {
+      fetch("https://eventforge.onrender.com/update-uds", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -797,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load Posters Table
   function loadPostersTable() {
-    fetch("/get-posters")
+    fetch("https://eventforge.onrender.com/get-posters")
       .then(response => response.json())
       .then(data => {
         postersData = data;
@@ -923,7 +923,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("tableTitle").innerText;
 
     if (title === "Posters Table") {
-      fetch("/update-posters", {
+      fetch("https://eventforge.onrender.com/update-posters", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -951,7 +951,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load Purchaselist Table
   function loadPurchaselistTable() {
-    fetch("/get-purchaselist")
+    fetch("https://eventforge.onrender.com/get-purchaselist")
       .then(response => response.json())
       .then(data => {
         purchaselistData = data;
@@ -1091,7 +1091,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const title = document.getElementById("tableTitle").innerText;
 
     if (title === "Purchaselist Table") {
-      fetch("/update-purchaselist", {
+      fetch("https://eventforge.onrender.com/update-purchaselist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -1251,7 +1251,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Submit Data Function
   function submitData() {
-    fetch("/update-housekeeping", {
+    fetch("https://eventforge.onrender.com/update-housekeeping", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1277,7 +1277,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load WIFI Table when WIFI button is clicked
   function loadWifiTable() {
-    fetch("/get-wifi")
+    fetch("https://eventforge.onrender.com/get-wifi")
       .then(res => res.json())
       .then(data => {
         wifiData = data;
@@ -1392,7 +1392,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Submit WIFI Data to Server
   function submitWifiData() {
-    fetch("/update-wifi", {
+    fetch("https://eventforge.onrender.com/update-wifi", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1419,7 +1419,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load Sponsors Table when Sponsors button is clicked
   function loadSponsorsTable() {
-    fetch("/get-sponsors")
+    fetch("https://eventforge.onrender.com/get-sponsors")
       .then(response => response.json())
       .then(data => {
         sponsorsData = data;
@@ -1535,7 +1535,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Submit Sponsors Data to Server
   function submitSponsorsData() {
-    fetch("/update-sponsors", {
+    fetch("https://eventforge.onrender.com/update-sponsors", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1562,7 +1562,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load Organizers Table when Organizers button is clicked
   function loadOrganizersTable() {
-    fetch("/get-organizers")
+    fetch("https://eventforge.onrender.com/get-organizers")
       .then(response => response.json())
       .then(data => {
         organizersData = data;
@@ -1671,7 +1671,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Submit Organizers Data to Server
   function submitOrganizersData() {
-    fetch("/update-organizers", {
+    fetch("https://eventforge.onrender.com/update-organizers", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1696,7 +1696,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadFinalEventsTable() {
-      fetch("/get-final-events")
+      fetch("https://eventforge.onrender.com/get-final-events")
         .then(response => response.json())
         .then(data => {
           currentData = data;
@@ -1819,7 +1819,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function submitFinalEventsData() {
-      fetch("/update-final-events", {
+      fetch("https://eventforge.onrender.com/update-final-events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -1844,7 +1844,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadUsersTable() {
-      fetch("/get-users")
+      fetch("https://eventforge.onrender.com/get-users")
         .then(response => response.json())
         .then(data => {
           currentData = data;
@@ -1946,7 +1946,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function submitUserData() {
-      fetch("/update-users", {
+      fetch("https://eventforge.onrender.com/update-users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
