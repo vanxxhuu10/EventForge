@@ -1437,15 +1437,14 @@ document.addEventListener("DOMContentLoaded", function () {
     table.border = "1";
     table.style.width = "100%";
 
-    // Define headers for the table
+    // Define headers explicitly for consistency
     const headers = ["id", "clubName", "event_date", "event_name", "sponsor_name", "amount", "status"];
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
 
-    // Create header cells
     headers.forEach(header => {
       const th = document.createElement("th");
-      th.innerText = header.charAt(0).toUpperCase() + header.slice(1); // Capitalize first letter
+      th.innerText = header;
       headerRow.appendChild(th);
     });
 
@@ -1455,71 +1454,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const tbody = table.createTBody();
 
-    // If there is data, populate the table rows
-    if (data.length > 0) {
+    if (data.length === 0) {
+      const tr = tbody.insertRow();
+      headers.forEach(() => {
+        const cell = tr.insertCell();
+        cell.innerText = "No data available";
+      });
+    } else {
       data.forEach((row, index) => {
         const tr = tbody.insertRow();
         headers.forEach(key => {
           const cell = tr.insertCell();
-          if (key === "id") {
-            cell.innerText = row[key]; // Keep ID read-only
-          } else {
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = row[key];
-            input.dataset.key = key;
-            input.dataset.index = index;
-            input.onchange = updateSponsorValue;
-            cell.appendChild(input);
-          }
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = row[key];
+          input.dataset.key = key;
+          input.dataset.index = index;
+          input.onchange = updateSponsorValue;
+          cell.appendChild(input);
         });
 
         const actionCell = tr.insertCell();
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.onclick = () => {
-          sponsorsData.splice(index, 1);
-          renderEditableSponsorsTable(sponsorsData);
-        };
-        actionCell.appendChild(delBtn);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "Delete";
+        deleteBtn.onclick = () => deleteSponsorRow(index);
+        actionCell.appendChild(deleteBtn);
       });
-    } else {
-      // Show an empty row with column structure when there's no data
-      const tr = tbody.insertRow();
-      headers.forEach(() => {
-        const cell = tr.insertCell();
-        cell.innerText = "";
-      });
-      const actionCell = tr.insertCell();
-      actionCell.innerHTML = "<em>No data yet</em>";
     }
 
     container.appendChild(table);
 
-    // Always display the "Add Row" button
     const addBtn = document.createElement("button");
     addBtn.innerText = "Add Row";
-    addBtn.onclick = () => {
-      sponsorsData.push({
-        id: "Auto",
-        clubName: "",
-        event_date: "",
-        event_name: "",
-        sponsor_name: "",
-        amount: 0,
-        status: ""
-      });
-      renderEditableSponsorsTable(sponsorsData);
-    };
+    addBtn.onclick = addSponsorRow;
     addBtn.style.marginTop = "20px";
     container.appendChild(addBtn);
 
-    // Create Submit Button (only once when table is loaded)
     const existingSubmitBtn = document.getElementById("submitSponsorsBtn");
     if (!existingSubmitBtn) {
       const submitBtn = document.createElement("button");
       submitBtn.innerText = "Submit";
-      submitBtn.id = "submitSponsorsBtn"; // Assign an ID to prevent creating multiple buttons
+      submitBtn.id = "submitSponsorsBtn";
       submitBtn.onclick = submitSponsorsData;
       submitBtn.style.marginLeft = "10px";
       container.appendChild(submitBtn);
@@ -1531,6 +1506,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const index = e.target.dataset.index;
     const key = e.target.dataset.key;
     sponsorsData[index][key] = e.target.value;
+  }
+
+  // Delete Sponsor Row
+  function deleteSponsorRow(index) {
+    sponsorsData.splice(index, 1);
+    renderEditableSponsorsTable(sponsorsData);
+  }
+
+  // Add Sponsor Row
+  function addSponsorRow() {
+    const newRow = {
+      id: "Auto",
+      clubName: "",
+      event_date: "",
+      event_name: "",
+      sponsor_name: "",
+      amount: 0,
+      status: ""
+    };
+    sponsorsData.push(newRow);
+    renderEditableSponsorsTable(sponsorsData);
   }
 
   // Submit Sponsors Data to Server
@@ -1552,6 +1548,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 });
+
 
 
 
@@ -1849,11 +1846,12 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
           currentData = data;
           document.getElementById("tableTitle").innerText = "Users Table";
-          renderEditableUsersTable(currentData);
-        });
+          renderUsersTable(currentData);
+        })
+        .catch(err => alert("Error loading users: " + err));
     }
 
-    function renderEditableUsersTable(data) {
+    function renderUsersTable(data) {
       const container = document.getElementById("venueTableContainer");
       container.innerHTML = "";
 
@@ -1865,12 +1863,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const thead = table.createTHead();
       const headerRow = thead.insertRow();
-
-      for (let i = 0; i < headers.length; i++) {
+      headers.forEach(header => {
         const th = document.createElement("th");
-        th.innerText = headers[i];
+        th.innerText = header;
         headerRow.appendChild(th);
-      }
+      });
 
       const actionTh = document.createElement("th");
       actionTh.innerText = "Actions";
@@ -1880,40 +1877,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (data.length === 0) {
         const tr = tbody.insertRow();
-        for (let i = 0; i < headers.length; i++) {
-          const cell = tr.insertCell();
-          cell.innerText = "No data available";
-        }
+        headers.forEach(() => {
+          const td = tr.insertCell();
+          td.innerText = "No data available";
+        });
       } else {
-        for (let index = 0; index < data.length; index++) {
-          const row = data[index];
-          const tr = tbody.insertRow();
-          for (let j = 0; j < headers.length; j++) {
-            const key = headers[j];
-            const cell = tr.insertCell();
+        data.forEach((user, index) => {
+          const row = tbody.insertRow();
+
+          headers.forEach(header => {
+            const cell = row.insertCell();
             const input = document.createElement("input");
             input.type = "text";
-            input.value = row[key];
-            input.dataset.key = key;
+            input.value = user[header] || "";
+            input.dataset.key = header;
             input.dataset.index = index;
-            input.onchange = updateUserValue;
-            cell.appendChild(input);
-          }
 
-          const actionCell = tr.insertCell();
+            if (header === "id") {
+              input.readOnly = true;
+            } else {
+              input.addEventListener("change", updateUserValue);
+            }
+
+            cell.appendChild(input);
+          });
+
+          const actionCell = row.insertCell();
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
           deleteBtn.onclick = () => deleteUserRow(index);
           actionCell.appendChild(deleteBtn);
-        }
+        });
       }
 
       container.appendChild(table);
 
       const addBtn = document.createElement("button");
       addBtn.innerText = "Add Row";
-      addBtn.onclick = addUserRow;
       addBtn.style.marginTop = "20px";
+      addBtn.onclick = addUserRow;
       container.appendChild(addBtn);
 
       const submitBtn = document.createElement("button");
@@ -1931,18 +1933,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function deleteUserRow(index) {
       currentData.splice(index, 1);
-      renderEditableUsersTable(currentData);
+      renderUsersTable(currentData);
     }
 
     function addUserRow() {
       const newRow = {
-        id: "",
         club_name: "",
         club_email: "",
         password: ""
       };
       currentData.push(newRow);
-      renderEditableUsersTable(currentData);
+      renderUsersTable(currentData);
     }
 
     function submitUserData() {
@@ -1953,19 +1954,18 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         body: JSON.stringify({ users: currentData })
       })
-        .then(res => res.json())
+        .then(response => response.json())
         .then(result => {
           alert(result.message || "Users data updated!");
           loadUsersTable();
         })
-        .catch(err => {
-          alert("Error updating users: " + err);
-        });
+        .catch(err => alert("Error updating users: " + err));
     }
 
     loadUsersTable();
   });
 });
+
 
 
 
