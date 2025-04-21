@@ -345,27 +345,27 @@ app.get('/api/requirements/:clubName', async (req, res) => {
   const eventName = req.query.event;
 
   if (!clubName || !eventName) {
-    return res.status(400).json({ error: 'Club name and event name are required' });
+    return res.status(400).json({ error: 'Club name and event name are required.' });
   }
 
   try {
-    // Fetch matching entries from all three collections
     const [udsData, housekeepingData, wifiData] = await Promise.all([
-      UDS.find({ clubName, eventName }).exec(),
-      Housekeeping.find({ clubName, eventName }).exec(),
-      Wifi.find({ clubName, eventName }).exec()
+      UDS.find({ clubName, eventName }).lean(),
+      Housekeeping.find({ clubName, eventName }).lean(),
+      Wifi.find({ clubName, eventName }).lean()
     ]);
 
-    res.json({
+    res.status(200).json({
       uds: udsData || [],
       housekeeping: housekeepingData || [],
       wifi: wifiData || []
     });
   } catch (err) {
-    console.error('Error fetching requirements:', err.message);
-    res.status(500).json({ error: 'Failed to fetch requirements data' });
+    console.error('Error fetching data:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 app.get('/api/posters/:clubName', async (req, res) => {
