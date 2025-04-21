@@ -350,9 +350,9 @@ app.get('/api/requirements/:clubName', async (req, res) => {
 
   try {
     const [udsData, housekeepingData, wifiData] = await Promise.all([
-      UDS.find({ clubName, event_name }).lean(),
-      Housekeeping.find({ clubName, event_name }).lean(),
-      Wifi.find({ clubName, event_name }).lean()
+      UDS.find({ clubName: clubName, event_name: eventName }).lean(),
+      Housekeeping.find({ clubName: clubName, event_name: eventName }).lean(),
+      Wifi.find({ clubName: clubName, event_name: eventName }).lean()
     ]);
 
     res.status(200).json({
@@ -368,6 +368,7 @@ app.get('/api/requirements/:clubName', async (req, res) => {
 
 
 
+
 app.get('/api/posters/:clubName', async (req, res) => {
   const clubName = req.params.clubName;
   const eventName = req.query.event;
@@ -378,7 +379,7 @@ app.get('/api/posters/:clubName', async (req, res) => {
 
   try {
     // Query MongoDB to find posters for the given clubName and eventName
-    const posters = await Poster.find({ clubName, event_name }).exec();
+    const posters = await Poster.find({ clubName:clubName, event_name:eventName }).exec();
 
     // If no posters found, return a 404 error
     if (posters.length === 0) {
@@ -400,7 +401,7 @@ app.get('/api/sponsors/:clubName', async (req, res) => {
     return res.status(400).json({ error: 'Club name and event name are required' });
   }
   try {
-    const sponsors = await Sponsor.find({ clubName, event_name }).exec();
+    const sponsors = await Sponsor.find({ clubName:clubName, event_name:eventName }).exec();
     if (sponsors.length === 0) {
       return res.status(404).json({ error: 'No sponsors found for this club and event' });
     }
@@ -421,7 +422,7 @@ app.get('/api/purchase/:club', async (req, res) => {
 
   try {
     // Query MongoDB to find purchase items for the given clubName and eventName
-    const purchaseList = await Purchase.find({ clubName, event_name }).exec();
+    const purchaseList = await Purchase.find({ clubName:clubName, event_name:eventName }).exec();
 
     // If no purchase items found, return a 404 error
     if (purchaseList.length === 0) {
