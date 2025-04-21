@@ -1413,140 +1413,137 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("sponsorsBtn").addEventListener("click", loadSponsorsTable);
+  document.getElementById("sponsorsBtn").addEventListener("click", () => {
+    let sponsorsData = [];
 
-  let sponsorsData = [];
+    function loadSponsorsTable() {
+      fetch("https://eventforge.onrender.com/get-sponsors")
+        .then(response => response.json())
+        .then(data => {
+          sponsorsData = data;
+          document.getElementById("tableTitle").innerText = "Sponsors Table";
+          renderEditableSponsorsTable(data);
+        })
+        .catch(err => alert("Error loading sponsors: " + err));
+    }
 
-  // Load Sponsors Table when Sponsors button is clicked
-  function loadSponsorsTable() {
-    fetch("https://eventforge.onrender.com/get-sponsors")
-      .then(response => response.json())
-      .then(data => {
-        sponsorsData = data;
-        document.getElementById("tableTitle").innerText = "Sponsors Table";
-        renderEditableSponsorsTable(data);
+    function renderEditableSponsorsTable(data) {
+      const container = document.getElementById("venueTableContainer");
+      container.innerHTML = ""; // Clear previous content
+
+      const table = document.createElement("table");
+      table.border = "1";
+      table.style.width = "100%";
+
+      // Define headers explicitly for consistency
+      const headers = ["id", "clubName", "event_date", "event_name", "sponsor_name", "amount", "status"];
+      const thead = table.createTHead();
+      const headerRow = thead.insertRow();
+
+      headers.forEach(header => {
+        const th = document.createElement("th");
+        th.innerText = header;
+        headerRow.appendChild(th);
       });
-  }
 
-  // Render Sponsors Table
-  function renderEditableSponsorsTable(data) {
-    const container = document.getElementById("venueTableContainer");
-    container.innerHTML = ""; // Clear previous content
+      const actionTh = document.createElement("th");
+      actionTh.innerText = "Actions";
+      headerRow.appendChild(actionTh);
 
-    const table = document.createElement("table");
-    table.border = "1";
-    table.style.width = "100%";
+      const tbody = table.createTBody();
 
-    // Define headers explicitly for consistency
-    const headers = ["id", "clubName", "event_date", "event_name", "sponsor_name", "amount", "status"];
-    const thead = table.createTHead();
-    const headerRow = thead.insertRow();
-
-    headers.forEach(header => {
-      const th = document.createElement("th");
-      th.innerText = header;
-      headerRow.appendChild(th);
-    });
-
-    const actionTh = document.createElement("th");
-    actionTh.innerText = "Actions";
-    headerRow.appendChild(actionTh);
-
-    const tbody = table.createTBody();
-
-    if (data.length === 0) {
-      const tr = tbody.insertRow();
-      headers.forEach(() => {
-        const cell = tr.insertCell();
-        cell.innerText = "No data available";
-      });
-    } else {
-      data.forEach((row, index) => {
+      if (data.length === 0) {
         const tr = tbody.insertRow();
-        headers.forEach(key => {
+        headers.forEach(() => {
           const cell = tr.insertCell();
-          const input = document.createElement("input");
-          input.type = "text";
-          input.value = row[key];
-          input.dataset.key = key;
-          input.dataset.index = index;
-          input.onchange = updateSponsorValue;
-          cell.appendChild(input);
+          cell.innerText = "No data available";
         });
+      } else {
+        data.forEach((row, index) => {
+          const tr = tbody.insertRow();
+          headers.forEach(key => {
+            const cell = tr.insertCell();
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = row[key];
+            input.dataset.key = key;
+            input.dataset.index = index;
+            input.onchange = updateSponsorValue;
+            cell.appendChild(input);
+          });
 
-        const actionCell = tr.insertCell();
-        const deleteBtn = document.createElement("button");
-        deleteBtn.innerText = "Delete";
-        deleteBtn.onclick = () => deleteSponsorRow(index);
-        actionCell.appendChild(deleteBtn);
-      });
+          const actionCell = tr.insertCell();
+          const deleteBtn = document.createElement("button");
+          deleteBtn.innerText = "Delete";
+          deleteBtn.onclick = () => deleteSponsorRow(index);
+          actionCell.appendChild(deleteBtn);
+        });
+      }
+
+      container.appendChild(table);
+
+      const addBtn = document.createElement("button");
+      addBtn.innerText = "Add Row";
+      addBtn.onclick = addSponsorRow;
+      addBtn.style.marginTop = "20px";
+      container.appendChild(addBtn);
+
+      const existingSubmitBtn = document.getElementById("submitSponsorsBtn");
+      if (!existingSubmitBtn) {
+        const submitBtn = document.createElement("button");
+        submitBtn.innerText = "Submit";
+        submitBtn.id = "submitSponsorsBtn";
+        submitBtn.onclick = submitSponsorsData;
+        submitBtn.style.marginLeft = "10px";
+        container.appendChild(submitBtn);
+      }
     }
 
-    container.appendChild(table);
-
-    const addBtn = document.createElement("button");
-    addBtn.innerText = "Add Row";
-    addBtn.onclick = addSponsorRow;
-    addBtn.style.marginTop = "20px";
-    container.appendChild(addBtn);
-
-    const existingSubmitBtn = document.getElementById("submitSponsorsBtn");
-    if (!existingSubmitBtn) {
-      const submitBtn = document.createElement("button");
-      submitBtn.innerText = "Submit";
-      submitBtn.id = "submitSponsorsBtn";
-      submitBtn.onclick = submitSponsorsData;
-      submitBtn.style.marginLeft = "10px";
-      container.appendChild(submitBtn);
+    function updateSponsorValue(e) {
+      const index = e.target.dataset.index;
+      const key = e.target.dataset.key;
+      sponsorsData[index][key] = e.target.value;
     }
-  }
 
-  // Handle Sponsor Table Edit
-  function updateSponsorValue(e) {
-    const index = e.target.dataset.index;
-    const key = e.target.dataset.key;
-    sponsorsData[index][key] = e.target.value;
-  }
+    function deleteSponsorRow(index) {
+      sponsorsData.splice(index, 1);
+      renderEditableSponsorsTable(sponsorsData);
+    }
 
-  // Delete Sponsor Row
-  function deleteSponsorRow(index) {
-    sponsorsData.splice(index, 1);
-    renderEditableSponsorsTable(sponsorsData);
-  }
+    function addSponsorRow() {
+      const newRow = {
+        id: "Auto",
+        clubName: "",
+        event_date: "",
+        event_name: "",
+        sponsor_name: "",
+        amount: 0,
+        status: ""
+      };
+      sponsorsData.push(newRow);
+      renderEditableSponsorsTable(sponsorsData);
+    }
 
-  // Add Sponsor Row
-  function addSponsorRow() {
-    const newRow = {
-      id: "Auto",
-      clubName: "",
-      event_date: "",
-      event_name: "",
-      sponsor_name: "",
-      amount: 0,
-      status: ""
-    };
-    sponsorsData.push(newRow);
-    renderEditableSponsorsTable(sponsorsData);
-  }
-
-  // Submit Sponsors Data to Server
-  function submitSponsorsData() {
-    fetch("https://eventforge.onrender.com/update-sponsors", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ sponsors: sponsorsData })
-    })
-      .then(res => res.json())
-      .then(result => {
-        alert(result.message || "Sponsors data updated!");
-        loadSponsorsTable(); // Reload the table after submission
+    function submitSponsorsData() {
+      fetch("https://eventforge.onrender.com/update-sponsors", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ sponsors: sponsorsData }) // Match with backend
       })
-      .catch(error => {
-        alert("Error updating data: " + error);
-      });
-  }
+        .then(res => res.json())
+        .then(result => {
+          alert(result.message || "Sponsors data updated!");
+          loadSponsorsTable(); // Reload the table after submission
+        })
+        .catch(error => {
+          alert("Error updating data: " + error);
+        });
+    }
+
+    loadSponsorsTable();
+  });
 });
 
 
