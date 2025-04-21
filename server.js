@@ -900,20 +900,26 @@ app.get("/get-users", async (req, res) => {
 });
 
 app.post("/update-users", async (req, res) => {
-  const users = req.body.events; 
+  const users = req.body.users; // Matching the frontend's structure
 
   if (!Array.isArray(users)) {
-    return res.status(400).json({ error: "Invalid format: expected an array under 'events'." });
+    return res.status(400).json({ error: "Invalid format: expected an array under 'users'." });
   }
 
   try {
+    // Delete all existing users before inserting the updated list
     await User.deleteMany({});
+    
+    // Ensure that only valid users (with required fields) are inserted
     const validUsers = users.filter(user => 
       user.club_name && user.club_email && user.password 
     ).map(user => ({
-      ...user
+      club_name: user.club_name,
+      club_email: user.club_email,
+      password: user.password
     }));
 
+    // Insert valid users into the database
     await User.insertMany(validUsers);
 
     res.json({ message: "Users table updated successfully." });
@@ -922,6 +928,7 @@ app.post("/update-users", async (req, res) => {
     res.status(500).json({ error: "Error updating users." });
   }
 });
+
 
 app.post("/update-allotted-venues", async (req, res) => {
   const venues = req.body.events; // Ensure that the request body contains 'events'
