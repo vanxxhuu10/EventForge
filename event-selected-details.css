@@ -33,6 +33,7 @@ body {
   padding: 3rem 2rem;
   text-align: center;
   animation: fadeIn 0.8s ease-out;
+  overflow: auto;
 }
 
 #eventTitle {
