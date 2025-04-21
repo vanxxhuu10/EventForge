@@ -130,7 +130,7 @@ function submitData() {
   };
 
   // Send data to the server
-  fetch('/submit-purchase-data', {
+  fetch('https://eventforge.onrender.com/submit-purchase-data', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
