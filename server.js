@@ -800,26 +800,38 @@ app.get("/get-sponsors", async (req, res) => {
 });
 
 app.post("/update-sponsors", async (req, res) => {
-  const sponsorsDetails = req.body.sponsorsDetails;
+  const sponsors = req.body.sponsors; // Ensure this matches the frontend key
 
-  if (!Array.isArray(sponsorsDetails)) {
+  if (!Array.isArray(sponsors)) {
     return res.status(400).json({ error: "Invalid sponsors data format." });
   }
 
   try {
+    // Clear current sponsors before inserting new data
     await Sponsor.deleteMany({});
-    const validSponsorsDetails = sponsorsDetails.filter(detail =>
-      detail.clubName && detail.event_date && detail.event_name && detail.sponsor_name
-    ).map(detail => ({
-      ...detail
+
+    // Filter valid sponsor details
+    const validSponsors = sponsors.filter(sponsor => 
+      sponsor.clubName && sponsor.event_date && sponsor.event_name && sponsor.sponsor_name
+    ).map(sponsor => ({
+      clubName: sponsor.clubName,
+      event_date: sponsor.event_date,
+      event_name: sponsor.event_name,
+      sponsor_name: sponsor.sponsor_name,
+      amount: sponsor.amount,
+      status: sponsor.status
     }));
-    await Sponsor.insertMany(validSponsorsDetails);
+
+    // Insert valid sponsor data
+    await Sponsor.insertMany(validSponsors);
+
     res.json({ message: "Sponsors details updated successfully." });
   } catch (error) {
     console.error("Failed to update sponsors details:", error.message);
     res.status(500).json({ error: "Failed to update sponsors details." });
   }
 });
+
 
 app.get("/get-organizers", async (req, res) => {
   try {
