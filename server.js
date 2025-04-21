@@ -350,7 +350,7 @@ app.get('/api/requirements/:clubName', async (req, res) => {
 
   try {
     const [udsData, housekeepingData, wifiData] = await Promise.all([
-      UDS.find({ clubName, event_ame }).lean(),
+      UDS.find({ clubName, event_name }).lean(),
       Housekeeping.find({ clubName, event_name }).lean(),
       Wifi.find({ clubName, event_name }).lean()
     ]);
