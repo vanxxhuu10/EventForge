@@ -3,9 +3,9 @@ function filterVenues(type) {
     venueListContainer.innerHTML = '<p>Loading...</p>';
   
     let url = '';
-    if (type === 'all') url = 'http://localhost:3000/api/all-venues';
-    else if (type === 'allotted') url = 'http://localhost:3000/api/allotted-venues';
-    else if (type === 'nonallotted') url = 'http://localhost:3000/api/nonallotted-venues';
+    if (type === 'all') url = 'https://eventforge.onrender.com/api/all-venues';
+    else if (type === 'allotted') url = 'https://eventforge.onrender.com/api/allotted-venues';
+    else if (type === 'nonallotted') url = 'https://eventforge.onrender.com/api/nonallotted-venues';
   
     fetch(url)
       .then(res => res.json())
