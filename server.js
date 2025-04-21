@@ -338,6 +338,8 @@ app.get('/events/:clubName', async (req, res) => {
   }
 });
 
+// Assuming you already have imported the models: UDS, Housekeeping, Wifi
+
 app.get('/api/requirements/:clubName', async (req, res) => {
   const clubName = req.params.clubName;
   const eventName = req.query.event;
@@ -347,18 +349,24 @@ app.get('/api/requirements/:clubName', async (req, res) => {
   }
 
   try {
-    // Fetch data from the MongoDB collections
-    const udsData = await UDS.find({ clubName, eventName }).exec();
-    const housekeepingData = await Housekeeping.find({ clubName, eventName }).exec();
-    const wifiData = await Wifi.find({ clubName, eventName }).exec();
+    // Fetch matching entries from all three collections
+    const [udsData, housekeepingData, wifiData] = await Promise.all([
+      UDS.find({ clubName, eventName }).exec(),
+      Housekeeping.find({ clubName, eventName }).exec(),
+      Wifi.find({ clubName, eventName }).exec()
+    ]);
 
-    // Return the data from all collections
-    res.json({ uds: udsData, housekeeping: housekeepingData, wifi: wifiData });
+    res.json({
+      uds: udsData || [],
+      housekeeping: housekeepingData || [],
+      wifi: wifiData || []
+    });
   } catch (err) {
     console.error('Error fetching requirements:', err.message);
     res.status(500).json({ error: 'Failed to fetch requirements data' });
   }
 });
+
 
 app.get('/api/posters/:clubName', async (req, res) => {
   const clubName = req.params.clubName;
