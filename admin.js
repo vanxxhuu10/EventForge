@@ -1840,8 +1840,9 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("usersBtn").addEventListener("click", () => {
     let currentData = [];
 
+    // Load Users Data from MongoDB via Backend
     function loadUsersTable() {
-      fetch("https://eventforge.onrender.com/get-users")
+      fetch("https://eventforge.onrender.com/get-users") // Assuming this returns users from your MongoDB collection
         .then(response => response.json())
         .then(data => {
           currentData = data;
@@ -1851,14 +1852,16 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => alert("Error loading users: " + err));
     }
 
+    // Render the Users Table
     function renderUsersTable(data) {
       const container = document.getElementById("venueTableContainer");
-      container.innerHTML = "";
+      container.innerHTML = ""; // Clear any existing content
 
       const table = document.createElement("table");
       table.border = "1";
       table.style.width = "100%";
 
+      // Table Headers
       const headers = data.length > 0 ? Object.keys(data[0]) : ["id", "club_name", "club_email", "password"];
 
       const thead = table.createTHead();
@@ -1869,6 +1872,7 @@ document.addEventListener("DOMContentLoaded", function () {
         headerRow.appendChild(th);
       });
 
+      // Add Actions Column
       const actionTh = document.createElement("th");
       actionTh.innerText = "Actions";
       headerRow.appendChild(actionTh);
@@ -1882,6 +1886,7 @@ document.addEventListener("DOMContentLoaded", function () {
           td.innerText = "No data available";
         });
       } else {
+        // Render each row of data
         data.forEach((user, index) => {
           const row = tbody.insertRow();
 
@@ -1894,7 +1899,7 @@ document.addEventListener("DOMContentLoaded", function () {
             input.dataset.index = index;
 
             if (header === "id") {
-              input.readOnly = true;
+              input.readOnly = true; // ID is read-only, auto-generated in the DB
             } else {
               input.addEventListener("change", updateUserValue);
             }
@@ -1902,22 +1907,25 @@ document.addEventListener("DOMContentLoaded", function () {
             cell.appendChild(input);
           });
 
+          // Add Delete Button
           const actionCell = row.insertCell();
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
-          deleteBtn.onclick = () => deleteUserRow(index);
+          deleteBtn.onclick = () => deleteUserRow(user._id);  // Pass MongoDB _id for deletion
           actionCell.appendChild(deleteBtn);
         });
       }
 
       container.appendChild(table);
 
+      // Add Row Button
       const addBtn = document.createElement("button");
       addBtn.innerText = "Add Row";
       addBtn.style.marginTop = "20px";
       addBtn.onclick = addUserRow;
       container.appendChild(addBtn);
 
+      // Submit Button
       const submitBtn = document.createElement("button");
       submitBtn.innerText = "Submit";
       submitBtn.style.marginTop = "20px";
@@ -1925,17 +1933,30 @@ document.addEventListener("DOMContentLoaded", function () {
       container.appendChild(submitBtn);
     }
 
+    // Update User Value when an input field changes
     function updateUserValue(e) {
       const index = e.target.dataset.index;
       const key = e.target.dataset.key;
       currentData[index][key] = e.target.value;
     }
 
-    function deleteUserRow(index) {
-      currentData.splice(index, 1);
-      renderUsersTable(currentData);
+    // Delete User Row from MongoDB and frontend
+    function deleteUserRow(userId) {
+      fetch(`https://eventforge.onrender.com/delete-user/${userId}`, {
+        method: "DELETE", // Assuming the backend handles DELETE requests
+        headers: {
+          "Content-Type": "application/json"
+        },
+      })
+        .then(response => response.json())
+        .then(result => {
+          alert(result.message || "User deleted successfully!");
+          loadUsersTable();  // Reload users after deletion
+        })
+        .catch(err => alert("Error deleting user: " + err));
     }
 
+    // Add a new row with empty data
     function addUserRow() {
       const newRow = {
         club_name: "",
@@ -1946,6 +1967,7 @@ document.addEventListener("DOMContentLoaded", function () {
       renderUsersTable(currentData);
     }
 
+    // Submit all user data back to the backend to update MongoDB
     function submitUserData() {
       fetch("https://eventforge.onrender.com/update-users", {
         method: "POST",
@@ -1957,14 +1979,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json())
         .then(result => {
           alert(result.message || "Users data updated!");
-          loadUsersTable();
+          loadUsersTable(); // Reload users after submission
         })
         .catch(err => alert("Error updating users: " + err));
     }
 
-    loadUsersTable();
+    loadUsersTable(); // Load the initial data from MongoDB
   });
 });
+
 
 
 
