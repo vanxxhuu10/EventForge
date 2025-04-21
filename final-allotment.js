@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("/api/final-clubs")
+    fetch("https://eventforge.onrender.com/api/final-clubs")
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("clubButtons");
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function loadClubEvents(clubName) {
-    fetch(`/api/events/${clubName}`)
+    fetch(`https://eventforge.onrender.com/api/events/${clubName}`)
       .then(res => res.json())
       .then(events => {
         const tableContainer = document.getElementById("clubTable");
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
       comments: row.querySelector("textarea[name='Comments']").value
     };
   
-    fetch("/api/submit-final-event", {
+    fetch("https://eventforge.onrender.com/api/submit-final-event", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
