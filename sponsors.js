@@ -99,7 +99,7 @@ function submitSponsors() {
       });
   });
 
-  fetch('/submit-sponsors', {
+  fetch('https://eventforge.onrender.com/submit-sponsors', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
