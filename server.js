@@ -338,44 +338,25 @@ app.get('/events/:clubName', async (req, res) => {
   }
 });
 
-app.get('/api/uds/:clubName', async (req, res) => {
-  const { clubName } = req.params;
-  const { event } = req.query;
-  if (!clubName || !event) return res.status(400).json({ error: "Missing club or event" });
+app.get('/api/requirements/:clubName', async (req, res) => {
+  const clubName = req.params.clubName;
+  const eventName = req.query.event;
 
-  try {
-    const data = await UDS.find({ clubName, eventName: event });
-    res.json({ uds: data });
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching UDS data" });
+  if (!clubName || !eventName) {
+    return res.status(400).json({ error: 'Club name and event name are required' });
   }
-});
-
-// For Housekeeping
-app.get('/api/housekeeping/:clubName', async (req, res) => {
-  const { clubName } = req.params;
-  const { event } = req.query;
-  if (!clubName || !event) return res.status(400).json({ error: "Missing club or event" });
 
   try {
-    const data = await Housekeeping.find({ clubName, eventName: event });
-    res.json({ housekeeping: data });
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching Housekeeping data" });
-  }
-});
+    // Fetch data from the MongoDB collections
+    const udsData = await UDS.find({ clubName, eventName }).exec();
+    const housekeepingData = await Housekeeping.find({ clubName, eventName }).exec();
+    const wifiData = await Wifi.find({ clubName, eventName }).exec();
 
-// For WiFi
-app.get('/api/wifi/:clubName', async (req, res) => {
-  const { clubName } = req.params;
-  const { event } = req.query;
-  if (!clubName || !event) return res.status(400).json({ error: "Missing club or event" });
-
-  try {
-    const data = await Wifi.find({ clubName, eventName: event });
-    res.json({ wifi: data });
+    // Return the data from all collections
+    res.json({ uds: udsData, housekeeping: housekeepingData, wifi: wifiData });
   } catch (err) {
-    res.status(500).json({ error: "Error fetching WiFi data" });
+    console.error('Error fetching requirements:', err.message);
+    res.status(500).json({ error: 'Failed to fetch requirements data' });
   }
 });
 
