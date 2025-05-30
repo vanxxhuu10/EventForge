@@ -88,6 +88,123 @@
     left: 0;
   }
   
+.zigzag-container {
+    max-width: 1000px;
+    margin: 100px auto;
+    padding: 20px;
+    position: relative;
+  }
+
+  .zigzag-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #0077b6;
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+
+  .zigzag-events {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .zigzag-event {
+    position: relative;
+    width: 90%;
+    padding: 20px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+  }
+
+  .zigzag-event:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .zigzag-event .event-date {
+    font-weight: bold;
+    color: #0077b6;
+    font-size: 18px;
+  }
+
+  .zigzag-event .event-title {
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  .zigzag-event .event-desc {
+    font-size: 14px;
+    color: #555;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .zigzag-event:hover .event-desc {
+    max-height: 200px;
+  }
+
+  .zigzag-events > a:nth-child(odd) {
+    justify-self: start;
+    text-align: right;
+  }
+
+  .zigzag-events > a:nth-child(even) {
+    justify-self: end;
+    text-align: left;
+  }
+
+  .zigzag-events > a::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    width: 12px;
+    height: 12px;
+    background: #0077b6;
+    border-radius: 50%;
+    border: 3px solid white;
+    z-index: 2;
+  }
+
+  .zigzag-events > a:nth-child(odd)::before {
+    right: -36px;
+  }
+
+  .zigzag-events > a:nth-child(even)::before {
+    left: -36px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .zigzag-line {
+      left: 20px;
+    }
+
+    .zigzag-events {
+      display: block;
+    }
+
+    .zigzag-events > a {
+      width: 100%;
+      text-align: left !important;
+      margin: 40px 0;
+    }
+
+    .zigzag-events > a::before {
+      left: -16px !important;
+      right: auto !important;
+    }
+  }
   /* Slider Container */
   /* Slider Container */
 .slider-container {
@@ -232,3 +349,4 @@
     font-size: 1rem;
     font-weight: 500;
 }
+
