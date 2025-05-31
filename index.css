@@ -135,11 +135,11 @@
   .zigzag-event .event-date {
     font-weight: bold;
     color: #0077b6;
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .zigzag-event .event-title {
-    font-size: 16px;
+    font-size: 18px;
     margin: 5px 0;
   }
 
@@ -152,7 +152,7 @@
   }
 
   .zigzag-event:hover .event-desc {
-    max-height: 200px;
+    max-height: fit-content;
   }
 
   .zigzag-events > a:nth-child(odd) {
@@ -205,6 +205,28 @@
       right: auto !important;
     }
   }
+
+  #mute-btn {
+  font-size: 24px;
+  color: #0a74da;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#mute-btn:hover {
+  background: #0a74da;
+  color: white;
+}
+
+#sound-visual {
+  box-shadow: 0 0 15px 5px #0a74da;
+}
+
   /* Slider Container */
   /* Slider Container */
 .slider-container {
@@ -339,9 +361,9 @@
 
 .member img {
     width: 100%;
-    height: auto;
+    height: fit-content;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .member p {

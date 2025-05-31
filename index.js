@@ -1,6 +1,6 @@
 const events = [
     {
-      date: 'Jan 26',
+      date: 'January 26',
       title: 'Republic Day',
       desc: 'The Republic Day celebration began with the ceremonial hoisting of the national flag, followed by the national anthem. The event featured cultural performances that showcased themes of patriotism and unity. A keynote speech emphasized the significance of the Constitution and the responsibilities of citizens in a democratic society. The audience participated with enthusiasm, embracing the events message of national pride and collective progress. The celebration concluded with the distribution of sweets, adding to the festive atmosphere.',
       link: '#republic-day'
@@ -42,19 +42,19 @@ const events = [
       link: '#orientation'
     },
    {
-      date: '15 August',
+      date: 'August 15',
       title: 'Independence Day',
       desc: 'Independence Day is a significant celebration that honors the freedom and sovereignty of the nation. The event typically begins with the hoisting of the national flag, followed by the singing of the national anthem. It includes speeches that reflect on the country’s history, struggles for independence, and the responsibilities of citizens. Cultural performances such as patriotic songs and dances highlight national pride and unity. The occasion brings together the community to remember the nation’s journey and inspire a shared commitment to progress and harmony.',
       link: '#orientation'
     },
     {
-      date: 'September',
+      date: 'August - September',
       title: 'TechnoVIT',
       desc: 'TechnoVIT is an annual technical festival that showcases innovation, creativity, and technological expertise among students. The event features a wide array of competitions, workshops, hackathons, and exhibitions across various engineering and technology domains. It provides a platform for participants to challenge their skills, collaborate on projects, and learn from experts in the field. TechnoVIT encourages problem-solving, technical excellence, and networking, making it a key event that inspires and empowers the tech community on campus.',
       link: '#christmas'
     },
     {
-      date: '25 December',
+      date: 'December 25',
       title: 'Christmas',
       desc: 'The evening unfolded as a Christmas-themed musical celebration hosted by the Event Managers Club and Music Club of VIT Chennai. Student bands lit up the stage, filling the auditorium with festive cheer and captivating performances. From soulful melodies to high-energy beats, each act brought a distinct rhythm and creative flair, making the event a true showcase of talent and artistry',
       link: '#orientation'
@@ -74,3 +74,77 @@ const events = [
     `;
     container.appendChild(card);
   });
+
+  const audio = document.getElementById('background-audio');
+const muteBtn = document.getElementById('mute-btn');
+const canvas = document.getElementById('audio-visualizer');
+const ctx = canvas.getContext('2d');
+
+canvas.width = 200;
+canvas.height = 100;
+
+let audioCtx, analyser, source, dataArray, bufferLength;
+
+function setupAudioContext() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  source = audioCtx.createMediaElementSource(audio);
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  analyser.fftSize = 128; // Number of data points (smaller = less bars)
+  bufferLength = analyser.frequencyBinCount;
+  dataArray = new Uint8Array(bufferLength);
+}
+
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+
+  analyser.getByteFrequencyData(dataArray);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const barWidth = canvas.width / bufferLength;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i];
+
+    // Color shifts from green to red based on bar height
+    const red = barHeight + 100;
+    const green = 250 - barHeight;
+    const blue = 50;
+
+    ctx.fillStyle = `rgb(${red},${green},${blue})`;
+    ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+
+    x += barWidth;
+  }
+}
+
+muteBtn.addEventListener('click', () => {
+  audio.muted = !audio.muted;
+  muteBtn.textContent = audio.muted ? '🔇' : '🔊';
+  canvas.style.opacity = audio.muted ? 0.3 : 1;
+});
+
+audio.addEventListener('play', () => {
+  if (!audioCtx) {
+    setupAudioContext();
+  }
+
+  // Resume audio context (needed in some browsers)
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+
+  drawVisualizer();
+});
+
+audio.volume = 0.2;
+audio.play().catch(() => {
+  audio.muted = true; // Start muted if autoplay blocked
+  muteBtn.textContent = '🔇';
+  canvas.style.opacity = 0.3;
+});
