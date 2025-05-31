@@ -2,7 +2,7 @@ function sendOTP() {
   const clubName = document.getElementById("club_name").value;
   const clubEmail = document.getElementById("club_email").value;
 
-  fetch('/send-otp', {
+  fetch('https://eventforge.onrender.com/send-otp', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ club_name: clubName, club_email: clubEmail })
@@ -61,7 +61,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await fetch('/signup', {
+        const response = await fetch('https://eventforge.onrender.com/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
