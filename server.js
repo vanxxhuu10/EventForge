@@ -3,9 +3,7 @@ const connectDB = require('./db');  // ✅ Correct!
 connectDB();
 const bodyParser = require('body-parser');
 const path = require('path');
-// const User = require('./models/User');
-
-// Import your models for each collection
+const nodemailer = require('nodemailer');
 const Organizer = require('./createOrganizersCollection');
 const Event = require('./createEventsCollection');
 const User = require('./createUsersCollection');
@@ -30,7 +28,7 @@ app.use(express.static(path.join(__dirname)));
 
 // Connect to the database
 
-
+const otpStore = {}; 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-eval'");
 
@@ -92,32 +90,92 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post('/signup', async (req, res) => {
-  const { club_name, club_email, password, confirm_password } = req.body;
+app.post('/send-otp', async (req, res) => {
+  const { club_name, club_email } = req.body;
 
-  if (!club_name || !club_email || !password || !confirm_password) {
-      return res.status(400).json({ success: false, error: 'All fields are required' });
+  if (!club_name || !club_email) {
+    return res.status(400).json({ success: false, error: 'Club name and email are required' });
   }
 
+  const existingUser = await User.findOne({ club_name });
+  if (existingUser) {
+    return res.status(400).json({ success: false, error: 'Club already exists' });
+  }
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const expiresAt = Date.now() + 2 * 60 * 1000;
+
+  otpStore[club_email] = {
+  otp: otp.toString(),
+  expiresAt: expiresAt
+};
+
+  setTimeout(() => {
+    delete otpStore[club_email];
+  }, 2 * 60 * 1000); 
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'srivastavavansh64@gmail.com',
+      pass: 'prrx dkza mtea htpg'
+    }
+  });
+
+  const mailOptions = {
+    from: 'srivastavavansh64@gmail.com',
+    to: club_email,
+    subject: 'OTP Verification - Club Signup',
+    text: `Your OTP is: ${otp}`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: 'OTP sent to email', expiry: 120 }); 
+  } catch (error) {
+    console.error('Email error:', error);
+    res.status(500).json({ success: false, error: 'Failed to send OTP' });
+  }
+});
+
+app.post('/signup', async (req, res) => {
+  const { club_name, club_email, password, confirm_password, otp } = req.body;
+  if (!club_name || !club_email || !password || !confirm_password || !otp) {
+    return res.status(400).json({ success: false, error: 'All fields including OTP are required' });
+  }
   if (password !== confirm_password) {
-      return res.status(400).json({ success: false, error: 'Passwords do not match' });
+    return res.status(400).json({ success: false, error: 'Passwords do not match' });
   }
 
   try {
-      // Check if user already exists
-      const existingUser = await User.findOne({ $or: [{ club_name }, { club_email }] });
-      if (existingUser) {
-          return res.status(400).json({ success: false, error: 'User already exists' });
-      }
+    const existingUser = await User.findOne({ $or: [{ club_name }, { club_email }] });
+    if (existingUser) {
+      return res.status(400).json({ success: false, error: 'Club already exists' });
+    }
+    const stored = otpStore[club_email];
+    if (!stored) {
+      return res.status(400).json({ success: false, error: 'No OTP found for this email' });
+    }
 
-      // Create and save user
-      const newUser = new User({ club_name, club_email, password }); // (You can hash password here)
-      await newUser.save();
+    const isExpired = Date.now() > stored.expiresAt;
+    const isInvalid = stored.otp !== otp;
 
-      return res.json({ success: true, message: 'User registered successfully' });
+    if (isExpired || isInvalid) {
+      return res.status(400).json({ success: false, error: 'Invalid or expired OTP' });
+    }
+
+    const newUser = new User({
+      club_name,
+      club_email,
+      password: password
+    });
+
+    await newUser.save();
+    delete otpStore[club_email];
+    return res.status(200).json({ success: true, message: 'User registered successfully' });
   } catch (err) {
-      console.error('MongoDB error:', err);
-      return res.status(500).json({ success: false, error: 'Internal server error' });
+    console.error('Signup Error:', err);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -338,8 +396,6 @@ app.get('/events/:clubName', async (req, res) => {
   }
 });
 
-// Assuming you already have imported the models: UDS, Housekeeping, Wifi
-
 app.get('/api/requirements/:clubName', async (req, res) => {
   const clubName = req.params.clubName;
   const eventName = req.query.event;
@@ -365,8 +421,6 @@ app.get('/api/requirements/:clubName', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 
 app.get('/api/posters/:clubName', async (req, res) => {
@@ -840,7 +894,6 @@ app.post("/update-sponsors", async (req, res) => {
     res.status(500).json({ error: "Failed to update sponsors details." });
   }
 });
-
 
 app.get("/get-organizers", async (req, res) => {
   try {

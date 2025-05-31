@@ -21,13 +21,19 @@
             
             <label for="club_email">Club Email ID</label>
             <input type="email" id="club_email" name="club_email" placeholder="Enter Club Email" required>
-            
+
+            <button type="button" onclick="sendOTP()">Send OTP</button>
+            <span id="otp-timer" style="color: red; font-weight: bold;"></span>
+
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter Password" required>
 
             <label for="confirm_password">Confirm Password</label>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
-            
+
+            <label for="otp">Enter OTP</label>
+            <input type="text" id="otp" name="otp" placeholder="Enter OTP received in email">
+
             <button type="submit">Signup</button>
             <p class="login-link">Already have an account? <a href="login.html">Login here</a></p>
         </form>
