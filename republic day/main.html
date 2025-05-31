@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Republic Day Celebration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="header-logos">
+  <img src="emc_logo.jpg" alt="EMC Logo" class="logo emc-logo">
+
+  <!-- 🖼️ New Highlights Section Between Logos -->
+  <div class="highlight-slider">
+    <div class="highlight-track">
+      <img src="./emc_logo.jpg" alt="Highlight 1">
+      <img src="vitlogo.png" alt="Highlight 2">
+      <img src="emc_logo.jpg" alt="Highlight 3">
+      <img src="./emc_logo.jpg" alt="Highlight 1">
+      <img src="vitlogo.png" alt="Highlight 2">
+      <img src="emc_logo.jpg" alt="Highlight 3">
+      <img src="./emc_logo.jpg" alt="Highlight 1">
+      <img src="vitlogo.png" alt="Highlight 2">
+      <img src="emc_logo.jpg" alt="Highlight 3">
+      <img src="./emc_logo.jpg" alt="Highlight 1">
+      <img src="vitlogo.png" alt="Highlight 2">
+      <img src="emc_logo.jpg" alt="Highlight 3">
+      <!-- Add more images as needed -->
+    </div>
+  </div>
+
+  <img src="vitlogo.png" alt="VIT Chennai Logo" class="logo vit-logo">
+</div>
+
+
+  <div class="sidebar">
+    <h3>📢 Latest Updates</h3>
+    <ul class="updates-list">
+      <li><strong>9:00 AM</strong> – Flag Hoisting Ceremony</li>
+      <li><strong>10:30 AM</strong> – Patriotic Skit Performance</li>
+      <li><strong>11:00 AM</strong> – Photo Booth Opens</li>
+    </ul>
+    
+  </div>
+
+  <main class="main-container">
+    <header>
+      <h1>Republic Day / Independence Day</h1>
+    </header>
+
+    <section class="booking">
+      <button id="book-slot-btn">📅 Book Slot If You Will Attend On Day Celebration and get +10 Points</button>
+      <form id="slot-form" class="hidden">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="text" id="regno" placeholder="Registration No." required>
+        <button type="submit" id="submit-slot" class="submit-slot">Register</button>
+      </form>
+      <div id="registered-msg" class="hidden">
+        <i class="fas fa-check-circle"></i> Registered Successfully
+      </div>
+    </section>
+
+    <section class="upload-section">
+  <h2>Upload Republic Day/Independence Day Photos 📸</h2>
+  <input type="file" id="photo-upload" accept="image/*" multiple>
+  <button id="upload-photo-btn">Final Upload</button>
+  <div id="upload-status" class="hidden"></div>
+    </section>
+
+   <section class="selfie-section">
+  <h2>Upload Your Selfie & Get +20 Points 🎉</h2>
+  <p><i>Your photo name should be in the format "registration number_26Jan.jpg"</i></p><br>
+  <button id="open-selfie-form">Upload Selfie</button>
+  <form id="selfie-form" class="hidden">
+    <input type="text" id="selfie-name" placeholder="Name" required>
+    <input type="text" id="selfie-reg" placeholder="Registration No." required>
+    <input type="file" id="selfie-file" accept="image/*">
+    <button type="submit">Submit Selfie</button>
+  </form>
+  <div id="flag-success" class="hidden">
+    You received <strong>5 points!</strong>
+    <div class="coin-burst"></div>
+  </div>
+    </section>
+
+    <section class="feedback-section">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdThukc6Gyr7G4uMBh1N8-lwKtW1ktaxMSDxJ0NrVHMDIxoIg/viewform?usp=dialog" target="_blank">📋 <i>Give Your Precious Feedback - Team EMC</i></a>
+    </section>
+
+    <section class="slider">
+      <div class="slider-track">
+        <img src="img/bhagat_singh.jpg" alt="Bhagat Singh">
+        <img src="img/nehru.jpg" alt="Jawaharlal Nehru">
+        <img src="img/bose.jpg" alt="Subhas Chandra Bose">
+        <img src="img/indian_army.jpg" alt="Indian Army">
+        <img src="img/abdul_kalam.jpg" alt="A.P.J Abdul Kalam">
+      </div>
+    </section>
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>
