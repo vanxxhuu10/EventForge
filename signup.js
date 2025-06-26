@@ -68,7 +68,8 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
                 club_name: clubName,
                 club_email: clubEmail,
                 password: password,
-                confirm_password: confirmPassword
+                confirm_password: confirmPassword,
+                opt:otp
             })
         });
 
