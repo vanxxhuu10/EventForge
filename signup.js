@@ -49,9 +49,10 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     const clubEmail = document.getElementById('club_email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
+    const otp = document.getElementById('otp').value.trim();  // ✅ Ensure you have an input with id="otp"
 
-    if (!clubName || !clubEmail || !password || !confirmPassword) {
-        errorElement.textContent = 'All fields are required';
+    if (!clubName || !clubEmail || !password || !confirmPassword || !otp) {
+        errorElement.textContent = 'All fields including OTP are required';
         return;
     }
 
@@ -69,7 +70,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
                 club_email: clubEmail,
                 password: password,
                 confirm_password: confirmPassword,
-                opt:otp
+                otp: otp  
             })
         });
 
@@ -85,5 +86,6 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         errorElement.textContent = 'Failed to connect to server. Please try again.';
     }
 });
+
 
 
